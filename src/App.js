@@ -4,8 +4,9 @@ import { Query } from 'react-apollo';
 import client from './client';
 import { SEARCH_REPOSITORIES } from './graphql';
 
+const PER_PAGE = 5;
 const DEFAULT_STATE = {
-  first: 5,
+  first: PER_PAGE,
   after: null,
   last: null,
   before: null,
@@ -20,6 +21,16 @@ const App = () => {
     setVariable({
       ...variable,
       query: e.target.value,
+    });
+  };
+
+  const goNext = (search) => {
+    setVariable({
+      ...variable,
+      first: PER_PAGE,
+      after: search.pageInfo.endCursor,
+      last: null,
+      before: null,
     });
   };
 
@@ -64,6 +75,10 @@ const App = () => {
                   );
                 })}
               </ul>
+
+              {search.pageInfo.hasNextPage === true ? (
+                <button onClick={() => goNext(search)}>Next</button>
+              ) : null}
             </React.Fragment>
           );
         }}
